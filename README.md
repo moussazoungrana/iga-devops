@@ -114,3 +114,100 @@ Ajouter la section suivante sur github actions:
  ## 5 - Test votre image docker
  	docker run -p 8086:8080 yourusername/yourprojectname:tag
 
+
+ ## 6 - Ajouter les dépendances de prometheus
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+puller la dernière version de docker et tester l'endpoint prometheus : 
+
+    http://localhost:8086/actuator/prometheus
+
+## 7 - Ajouter un fichier docker-compose.yml
+
+    version: '3'
+    services:
+    prometheus:
+        image: prom/prometheus:v2.35.0
+        network_mode: host
+        container_name: prometheus
+        restart: unless-stopped
+        volumes:
+        - ./prometheus:/etc/prometheus/
+        command:
+        - "--config.file=/etc/prometheus/prometheus.yaml"
+
+ 
+ajouter le fichier prometheus.yaml au dossier ./prometheus/prometheus.yaml :
+
+    scrape_configs:
+    - job_name: 'Spring Boot Application input'
+        metrics_path: '/actuator/prometheus'
+        scrape_interval: 2s
+        static_configs:
+        - targets: ['localhost:8086']
+            labels:
+            application: 'My Spring Boot Application'
+
+Démarrer docker compose:
+
+    docker-compose up
+
+Tester le serveur prometheus:
+
+    http://localhost:9090/
+
+## 8 - Ajouter au fichier docker-compose.yml la congig grafana
+    grafana:
+        image: grafana/grafana-oss:8.5.2
+        network_mode: host
+        container_name: grafana
+        restart: unless-stopped
+        user: root
+        volumes:
+        - ./data/grafana:/var/lib/grafana
+        environment:
+        - GF_SECURITY_ADMIN_PASSWORD=admin
+        - GF_USERS_ALLOW_SIGN_UP=false
+        - GF_SERVER_DOMAIN=localhost
+        # Enabled for logging
+        - GF_LOG_MODE=console file
+        - GF_LOG_FILTERS=alerting.notifier.slack:debug alertmanager:debug ngalert:debug
+
+Restrer docker-compose :
+
+    docker-compose down
+    docker-compose up
+
+Tester le serveur grafana:
+
+    http://localhost:3000/
+
+
+## 9 - Ajouter la datasource de prometheus sur grafana
+
+Sur l'interface de grafana, choisissez la Configuration > datasource et sélectionnez Prometheus
+
+ajouter l'url du serveur Prometheus
+
+    http://localhost:9090/
+
+Sauvegarder la configuration
+
+## 9 - Ajouter le dastbord springboot
+
+Sur l'interface de grafana, choisissez la Create > import et ajoutez le code suivant pour le dashboard suivante:
+
+    https://grafana.com/grafana/dashboards/6756-spring-boot-statistics/
+
+
+## 10 - Test le dastbord
+
+	![alt text](image.jpg)
