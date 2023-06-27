@@ -164,7 +164,7 @@ Tester le serveur prometheus:
 
     http://localhost:9090/
 
-## 8 - Ajouter au fichier docker-compose.yml la congig grafana
+## 8 - Ajouter au fichier docker-compose.yml la config grafana
     grafana:
         image: grafana/grafana-oss:8.5.2
         network_mode: host
@@ -181,7 +181,7 @@ Tester le serveur prometheus:
         - GF_LOG_MODE=console file
         - GF_LOG_FILTERS=alerting.notifier.slack:debug alertmanager:debug ngalert:debug
 
-Restrer docker-compose :
+Restart docker-compose :
 
     docker-compose down
     docker-compose up
@@ -201,12 +201,12 @@ ajouter l'url du serveur Prometheus
 
 Sauvegarder la configuration
 
-## 9 - Ajouter le dastbord springboot
+## 9 - Ajouter le dashbord springboot
 
-Sur l'interface de grafana, choisissez la Create > import et ajoutez le code suivant pour le dashboard suivante:
+Sur l'interface de grafana, choisissez la Create > import et ajoutez le code du dashboard suivant:
 
     https://grafana.com/grafana/dashboards/6756-spring-boot-statistics/
 
 
-## 10 - Test le dastbord
+## 10 - Tester le dashbord
 ![alt text](image.png)
