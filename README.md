@@ -209,5 +209,4 @@ Sur l'interface de grafana, choisissez la Create > import et ajoutez le code sui
 
 
 ## 10 - Test le dastbord
-
-	![alt text](image.jpg)
+![alt text](image.png)
